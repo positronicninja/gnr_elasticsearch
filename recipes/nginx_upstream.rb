@@ -7,11 +7,15 @@
 # All rights reserved
 #
 
-template '/etc/nginx/sites-enabled/elasticsearch' do
+template '/etc/nginx/sites-available/elasticsearch' do
   source 'elasticsearch_upstream.erb'
   user 'root'
   group 'root'
   mode '644'
+end
+
+link '/etc/nginx/sites-enabled/elasticsearch' do
+  to '/etc/nginx/sites-available/elasticsearch'
 end
 
 service 'nginx' do
