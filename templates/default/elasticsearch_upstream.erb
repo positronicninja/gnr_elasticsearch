@@ -1,0 +1,15 @@
+upstream elasticsearch  {
+        server <%= node[:elasticsearch][:server_ip] %>:<%= node[:elasticsearch][:server_port_upstream] %>;
+        keepalive 15;
+    }
+
+server {
+    listen       <%= node[:elasticsearch][:server_port_listen] %>;
+
+    location / {
+      proxy_pass http://elasticsearch;
+      proxy_http_version 1.1;
+      proxy_set_header Connection "Keep-Alive";
+      proxy_set_header Proxy-Connection "Keep-Alive";
+    }
+}
