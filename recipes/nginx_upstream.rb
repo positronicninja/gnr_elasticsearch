@@ -14,10 +14,19 @@ template '/etc/nginx/sites-available/elasticsearch' do
   mode '644'
 end
 
-link '/etc/nginx/sites-enabled/elasticsearch' do
-  to '/etc/nginx/sites-available/elasticsearch'
+service 'nginx' do
+  supports status: true, restart: true, reload: true
+  action :nothing
 end
 
-service 'nginx' do
-  action :reload
+execute 'verify_nginx_conf' do
+  command '`which nginx` -t'
+  user 'root'
+  action :nothing
+  notifies :reload, 'service[nginx]'
+end
+
+link '/etc/nginx/sites-enabled/elasticsearch' do
+  to '/etc/nginx/sites-available/elasticsearch'
+  notifies :run, 'execute[verify_nginx_conf]'
 end
